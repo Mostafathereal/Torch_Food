@@ -24,9 +24,9 @@ for epoch in range(500):
     z2 = a1.mm(w2)
     yhat = z2
 
-    loss = (yhat - y).pow(2).sum().item
+    loss = (yhat - y).pow(2).sum().item()
 
-    # print(epoch, loss)
+    print(epoch, loss)
     dz2 = dyhat = (2* (yhat - y))
     dw2 = a1.t().mm(dz2)
     dz1 = dz2.mm(w2.t())
