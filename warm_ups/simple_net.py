@@ -1,5 +1,6 @@
 ## just a review of how to build a NN using NumPy only
 import numpy as np
+import time
 
 # dimensions
 N = 32
@@ -15,8 +16,9 @@ w2 = np.random.randn(H, D_out)
 #learning ra
 # te
 lr = 1e-6
+start = time.time()
 
-for epoch in range(300):
+for epoch in range(500):
 
     ###   Forward prop   ###
     # sum of prod
@@ -27,12 +29,12 @@ for epoch in range(300):
     z2 = a1.dot(w2)
     ## no activation here
     # a2 = yhat
-    yhat = a1.dot(w2)
+    yhat = z2
     # no activation for out
 
     loss = np.square(yhat - y).sum()
     # print(yhat)
-    print(epoch, loss)
+    # print(epoch, loss)
 
     ## derivative of mean square error:
     # ((yhat - y)^2)' = 2(yhat - y)
@@ -49,7 +51,7 @@ for epoch in range(300):
 
 
 
-
+print("time = ", time.time() - start)
 
 
 
