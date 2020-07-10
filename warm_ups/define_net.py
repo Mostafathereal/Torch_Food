@@ -34,7 +34,7 @@ class Net(nn.Module):
 
         # first fully connected layer
         x = F.relu(self.fc1(x))
-        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
 
         # softmax or whatever output activation function will be applied later if necessary
         x = self.fc3(x)
@@ -45,10 +45,23 @@ class Net(nn.Module):
     def num_flat_features(self, x):
         size = x.size()[1:] # exclude batch dimension
         num_features = 1
-        for i in size():
+        for i in size:
             num_features *= i
         return num_features
 
 net = Net()
 print(net)
 
+params = list(net.parameters())
+print(len(params))
+for i in params:
+    print(i.size())
+
+inpt = torch.randn(1, 1, 32, 32)
+
+## this will invoke the "forward" method we difned earlier
+out = net(inpt)
+print(out)
+
+net.zero_grad()
+out.backward(torch.randn(1, 10))
