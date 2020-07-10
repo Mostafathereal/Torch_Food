@@ -63,5 +63,22 @@ inpt = torch.randn(1, 1, 32, 32)
 out = net(inpt)
 print(out)
 
+target = torch.randn(10) # youre 'label'
+target = target.view(1, -1) ## make dummy target same shape as output 
+
+criterion = nn.MSELoss()
+
+loss = criterion(out, target)
+print(loss)
+
+# # now we follow `loss` backward using .grad_fn attribute 
+# print(loss.grad_fn)  # MSELoss
+# print(loss.grad_fn.next_functions[0][0])  # Linear
+# print(loss.grad_fn.next_functions[0][0].next_functions[0][0])  # ReLU
+
 net.zero_grad()
-out.backward(torch.randn(1, 10))
+loss.backward()
+print("conv1 bias grad: ", net.conv1.bias.grad)
+print("conv1 weight grad: ", net.conv1.weight.grad)
+
+#stochastic GD
