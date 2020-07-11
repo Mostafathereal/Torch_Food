@@ -3,6 +3,7 @@ import cv2
 import torch 
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.optim as optim
 
 class Net(nn.Module):
 
@@ -82,3 +83,11 @@ print("conv1 bias grad: ", net.conv1.bias.grad)
 print("conv1 weight grad: ", net.conv1.weight.grad)
 
 #stochastic GD
+lr = 0.001
+for p in net.parameters():
+    p.data.sub_(p.grad.data * lr)
+
+# for name, param in net.named_parameters():
+#     if param.requires_grad:
+#         print (name, param.size())
+
