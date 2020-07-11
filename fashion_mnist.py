@@ -22,14 +22,50 @@ print(testset)
 batch1 = iter(testloader)
 imgs, labels = batch1.__next__()
 print(labels)
-print(imgs[0]) # just making sure it looks ok
+print(imgs.size()) # just making sure it looks ok
 
 class vgg16(nn.Module):
     def __init__(self):
         super(vgg16, self).__init__()
 
-        print("hi")
-        # self.cnn_block = nn.Sequential(
-        #     nn.Conv2d(1)
-        # )
+        ## note that vgg always does same padding on convolutions
+        ## dec img size by pooling and inc channels using kernels
+        self.cnn_block = nn.Sequential(
+            nn.Conv2d(1, 64, 3, padding = 1),
+            nn.ReLU()
+            nn.Conv2d(64, 64, 3, padding = 1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
+            
+            nn.Conv2d(64, 265, 3, padding = 1),
+            nn.ReLU()
+            nn.Conv2d(256, 256, 3, padding = 1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
 
+            nn.Conv2d(256, 512, 3, padding = 1),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, padding = 1),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, padding = 1),
+            nn.ReLU()
+            nn.MaxPool2d(2, 2)
+
+            nn.Conv2d(256, 512, 3, padding = 1),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, padding = 1),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, padding = 1),
+            nn.ReLU()
+        )
+
+        self.fc_block = nn.Sequential(
+            nn.Linear()
+        )
+
+    def num_flat_features(self, x):
+        size = x.size()[1:] # exclude batch dimension
+        num_features = 1
+        for i in size:
+            num_features *= i
+        return num_features
