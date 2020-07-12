@@ -25,7 +25,7 @@ print(testset)
 # print(labels)
 # print(imgs.size()) # just making sure it looks ok
 
-class vgg16(nn.Module):
+class fashNet(nn.Module):
 
     def __init__(self):
         super(vgg16, self).__init__()
@@ -74,7 +74,7 @@ class vgg16(nn.Module):
     #         num_features *= i
     #     return num_features
 
-net = vgg16().to(device)
+net = fashNet().to(device)
 loss_func = nn.CrossEntropyLoss()
 opt = optim.Adam(net.parameters(), lr = 0.0001)
 
