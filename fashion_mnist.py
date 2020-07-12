@@ -7,13 +7,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-
 trainset = torchvision.datasets.FashionMNIST(root = "./data", train = True, download = True, transform = transforms.ToTensor())
 testset = torchvision.datasets.FashionMNIST(root = "./data", train = False, download = True, transform = transforms.ToTensor())
 
 trainloader = torch.utils.data.DataLoader(trainset, batch_size = 8, shuffle = True)
 testloader = torch.utils.data.DataLoader(testset, batch_size= 8, shuffle = False)
 
+device = torch.device("cuda:0")
+print(device)
 
 #always look at your datasets
 print(trainset)
@@ -50,18 +51,26 @@ class vgg16(nn.Module):
             nn.Conv2d(512, 512, 3, padding = 1),
             nn.ReLU()
             nn.MaxPool2d(2, 2)
-
-            nn.Conv2d(256, 512, 3, padding = 1),
-            nn.ReLU(),
-            nn.Conv2d(512, 512, 3, padding = 1),
-            nn.ReLU(),
-            nn.Conv2d(512, 512, 3, padding = 1),
-            nn.ReLU()
         )
 
         self.fc_block = nn.Sequential(
-            nn.Linear()
+            nn.Linear(4096, 1024),
+            nn.ReLU()
+            nn.Linear(1024, 256),
+            nn.ReLU()
+            nn.Linear(256, 64),
+            nn.ReLU()
+            nn.Linear(64, 10) 
         )
+
+    def forward(self, x):
+        x = self.cnn_block(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc_block(x)
+        return x
+
+
+
 
     def num_flat_features(self, x):
         size = x.size()[1:] # exclude batch dimension
