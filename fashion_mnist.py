@@ -33,26 +33,26 @@ class vgg16(nn.Module):
         ## note that vgg always does same padding on convolutions
         ## dec img size by pooling and inc channels using kernels
         self.cnn_block = nn.Sequential(
-            nn.Conv2d(1, 32, 3, padding = 1),
+            nn.Conv2d(1, 8, 3, padding = 1),
             # nn.BatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2, 2),
 
-            nn.Conv2d(32, 32, 3, padding = 1),
+            nn.Conv2d(8, 16, 3, padding = 1),
             # nn.BatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2, 2),
             
-            nn.Conv2d(32, 64, 3, padding = 1),
+            nn.Conv2d(16, 32, 3, padding = 1),
             nn.ReLU(),
-            nn.Conv2d(64, 64, 3, padding = 1),
+            nn.Conv2d(32, 32, 3, padding = 1),
             nn.ReLU(),
             # nn.MaxPool2d(2, 2),
             # out = 14x14 img
         )
 
         self.fc_block = nn.Sequential(
-            nn.Linear(3136, 512),
+            nn.Linear(1568, 512),
             nn.ReLU(),
             nn.Dropout(0.3),
             nn.Linear(512, 128),
@@ -111,12 +111,14 @@ def evalaluate(dataLoader):
 
 ## training loop
 loss_arr = []
-epochs = 50
+epochs = 10
 c = 0
 for epoch in range(epochs):
+    print("----------------EPOCH ", c, " ---------------------")
+    c += 1
     for data in trainloader:
-        print(c)
-        c+= 1
+        # print(c)
+        # c+= 1
         net.train() # put net in train mode
         inputs, labels = data
         inputs, labels = inputs.to(device), labels.to(device)
