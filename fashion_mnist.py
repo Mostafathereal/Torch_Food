@@ -10,8 +10,8 @@ import torch.optim as optim
 trainset = torchvision.datasets.FashionMNIST(root = "./data", train = True, download = True, transform = transforms.ToTensor())
 testset = torchvision.datasets.FashionMNIST(root = "./data", train = False, download = True, transform = transforms.ToTensor())
 
-trainloader = torch.utils.data.DataLoader(trainset, batch_size = 8, shuffle = True)
-testloader = torch.utils.data.DataLoader(testset, batch_size= 8, shuffle = False)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size = 32, shuffle = True)
+testloader = torch.utils.data.DataLoader(testset, batch_size= 32, shuffle = False)
 
 device = torch.device("cuda")
 print(device)
@@ -33,39 +33,31 @@ class vgg16(nn.Module):
         ## note that vgg always does same padding on convolutions
         ## dec img size by pooling and inc channels using kernels
         self.cnn_block = nn.Sequential(
-            nn.Conv2d(1, 64, 3, padding = 1),
+            nn.Conv2d(1, 32, 3, padding = 1),
+            # nn.BatchNorm2d(),
             nn.ReLU(),
-            nn.Conv2d(64, 64, 3, padding = 1),
+            nn.MaxPool2d(2, 2),
+
+            nn.Conv2d(32, 32, 3, padding = 1),
+            # nn.BatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2, 2),
             
-            nn.Conv2d(64, 256, 3, padding = 1),
+            nn.Conv2d(32, 64, 3, padding = 1),
             nn.ReLU(),
-            nn.Conv2d(256, 256, 3, padding = 1),
+            nn.Conv2d(64, 64, 3, padding = 1),
             nn.ReLU(),
-            nn.MaxPool2d(2, 2),
-
-            nn.Conv2d(256, 512, 3, padding = 1),
-            nn.ReLU(),
-            nn.Conv2d(512, 512, 3, padding = 1),
-            nn.ReLU(),
-            nn.Conv2d(512, 512, 3, padding = 1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 1)
-            # out = 6x6 img
+            # nn.MaxPool2d(2, 2),
+            # out = 14x14 img
         )
 
         self.fc_block = nn.Sequential(
-            # 6x6x512 = 18432
-            nn.Linear(18432, 4096),
+            nn.Linear(3136, 512),
             nn.ReLU(),
-            nn.Linear(4096, 1024),
+            nn.Dropout(0.3),
+            nn.Linear(512, 128),
             nn.ReLU(),
-            nn.Linear(1024, 256),
-            nn.ReLU(),
-            nn.Linear(256, 64),
-            nn.ReLU(),
-            nn.Linear(64, 10),
+            nn.Linear(128, 10)
             # nn.Softmax(dim = 1) 
         )
 
@@ -118,8 +110,23 @@ def evalaluate(dataLoader):
 
 
 ## training loop
+loss_arr = []
 epochs = 50
+c = 0
 for epoch in range(epochs):
-    for 
+    for data in trainloader:
+        print(c)
+        c+= 1
+        net.train() # put net in train mode
+        inputs, labels = data
+        inputs, labels = inputs.to(device), labels.to(device)
+        opt.zero_grad()
+        outputs = net(inputs)
+        loss = loss_func(outputs, labels)
+        loss.backward()
+        opt.step()
+    loss_arr.append(loss.item())
+
+
 
 
