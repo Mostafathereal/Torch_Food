@@ -117,5 +117,9 @@ def evalaluate(dataLoader):
     return (correct/total) * 100
 
 
+## training loop
+epochs = 50
+for epoch in range(epochs):
+    for 
 
 
